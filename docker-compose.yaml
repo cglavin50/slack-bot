@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    env_file:
+      - './.env'
+    volumes:
+      - .:/usr/src/app
+    command: python3 bot.py
+  db:
+    image: redis:7.2-rc-alpine
+    ports:
+    volumes:
+    env_file:
+
+volumes:
