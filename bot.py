@@ -38,11 +38,12 @@ def message(payload):
     event = payload.get('event', {})
     text = event.get('text')
     channel_id = event.get('channel')
+    uid = event.get('user')
 
-    if text == "!leaderboards":
+    if text == "!leaderboards" and uid != bot_id:
+        print("!leaderboard command invoked")
         leaderboard_command(channel_id)
     else:
-        uid = event.get('user')
         files = event.get('files')
         if files:
             print("Files attached") # files is an array of attachments (files), each one a map
@@ -67,24 +68,24 @@ def leaderboard_command(channel_id):
     # order dict for leadboards
     sorted_throwing = sorted(throwing_dict.items(), key=lambda x:x[1], reverse=True) # figure out this lambda later
     sorted_workout = sorted(workout_dict.items(), key=lambda x:x[1], reverse=True)
-    msg_text = "*Leaderboards*\n\n *Throwing Leaderboard*\n"
+    msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard*\n\t"
     counter = 1
-    for item in sorted_throwing.keys():
+    for item in sorted_throwing:
         if counter >= 5:
             break
-        msg_text += str(counter) + ". " + item + "\n"
+        msg_text += str(counter) + ". " + item[0].replace("throwing", "") + "\n\t"
         counter += 1
     counter = 0
-    msg_text += "\n*Workouts Leaderboard\n"
-    for item in sorted_workout.keys():
+    msg_text += "\n\t*Workouts Leaderboard*\n"
+    for item in sorted_workout:
         if counter >= 5:
             break
-        msg_text += str(counter) + ". " + item + "\n"
+        msg_text += str(counter) + ". " + item[0].replace("workout" "") + "\n\t"
         counter += 1
     
     # post message 
     client.chat_postMessage(
-        channel = os.environ[os.environ["COMMAND_ID"]],
+        channel = os.environ["COMMAND_ID"],
         blocks = [
             {
                 "type": "section",
