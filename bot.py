@@ -1,10 +1,10 @@
-import slack
 import os
 import redis
 from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask
 from slackeventsapi import SlackEventAdapter
+from slack_sdk import WebClient
 
 # env initialization
 env_path = Path('.') / '.env' # stored in root directory
@@ -15,7 +15,7 @@ app = Flask(__name__)
 slack_event_adapter = SlackEventAdapter(os.environ["SLACK_SIGNING_SECRET"], '/slack/events', app)
 
 # slack init
-client = slack.WebClient(token=os.environ['SLACK_API_TOKEN'])
+client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
 
 # redis init
@@ -37,15 +37,16 @@ def message(payload):
     # print(payload)
     event = payload.get('event', {})
     text = event.get('text')
+    channel_id = event.get('channel')
 
-    if text == "/leaderboards":
-        leaderboard_command(event.get('channel'))
+    if text == "!leaderboards":
+        leaderboard_command(channel_id)
     else:
         uid = event.get('user')
         files = event.get('files')
         if files:
             print("Files attached") # files is an array of attachments (files), each one a map
-            update_counts(uid)
+            update_counts(uid, channel_id)
 
         # if uid != bot_id:
             # client.chat_postMessage(channel=channel_id, text=text)
@@ -54,7 +55,48 @@ def message(payload):
 def leaderboard_command(channel_id):
     # write a command to check the DB and send a leaderboard update to given channel
     # should cache this as well
-    print("Implement this later")
+    
+    # append all key : value pairs to a dict
+    throwing_dict = {}
+    workout_dict = {}
+    for key in redis_client.scan_iter():
+        if "throwing" in key:
+            throwing_dict[key] = redis_client.get(key)
+        if "workout" in key:
+            workout_dict[key] = redis_client.get(key)
+    # order dict for leadboards
+    sorted_throwing = sorted(throwing_dict.items(), key=lambda x:x[1], reverse=True) # figure out this lambda later
+    sorted_workout = sorted(workout_dict.items(), key=lambda x:x[1], reverse=True)
+    msg_text = "*Leaderboards*\n\n *Throwing Leaderboard*\n"
+    counter = 1
+    for item in sorted_throwing.keys():
+        if counter >= 5:
+            break
+        msg_text += str(counter) + ". " + item + "\n"
+        counter += 1
+    counter = 0
+    msg_text += "\n*Workouts Leaderboard\n"
+    for item in sorted_workout.keys():
+        if counter >= 5:
+            break
+        msg_text += str(counter) + ". " + item + "\n"
+        counter += 1
+    
+    # post message 
+    client.chat_postMessage(
+        channel = os.environ[os.environ["COMMAND_ID"]],
+        blocks = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": msg_text
+                }
+            }
+        ]
+    )
+# end post leadboards function
+    
 
 def update_counts(uid, channel_id):
     # this function should increment the count of a given user to the redis DB
@@ -63,8 +105,9 @@ def update_counts(uid, channel_id):
     real_name = user_profile.get("real_name")
     display_name = user_profile.get("display_name")
     # temp
-    workout_channel = "temp id"
-    throwing_channel = "tempid2"
+    workout_channel = os.environ["WORKOUT_ID"]
+    # throwing_channel = os.environ["THROW_ID"]
+    throwing_channel = "C05C65T6Y07"# change back to throwing channel shortly
     if channel_id == workout_channel:
         print("Incrementing workout count for " + real_name + " ("+display_name+")")
         key = real_name + " workout"
