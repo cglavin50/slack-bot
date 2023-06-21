@@ -20,14 +20,14 @@ bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
 
 # redis init
 redis_client = redis.Redis(
-    host='localhost', # migrate this once reach deployment stage
+    host='db', # migrate this once reach deployment stage
     port=6379,
     charset='utf-8',
     decode_responses=True,
 )
 
-response = redis_client.ping()
-print(response)
+# response = redis_client.ping()
+# print(response)
 
 
 # slack event handlers
@@ -41,7 +41,7 @@ def message(payload):
     uid = event.get('user')
 
     if text == "!leaderboards" and uid != bot_id:
-        print("!leaderboard command invoked")
+        print("Printing leaderboard updates")
         leaderboard_command(channel_id)
     else:
         files = event.get('files')
@@ -68,7 +68,7 @@ def leaderboard_command(channel_id):
     # order dict for leadboards
     sorted_throwing = sorted(throwing_dict.items(), key=lambda x:x[1], reverse=True) # figure out this lambda later
     sorted_workout = sorted(workout_dict.items(), key=lambda x:x[1], reverse=True)
-    msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard*\n\t"
+    msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
     counter = 1
     for item in sorted_throwing:
         if counter >= 5:
@@ -76,7 +76,7 @@ def leaderboard_command(channel_id):
         msg_text += str(counter) + ". " + item[0].replace("throwing", "") + "\n\t"
         counter += 1
     counter = 0
-    msg_text += "\n\t*Workouts Leaderboard*\n"
+    msg_text += "\n\t*Workouts Leaderboard* :muscle:\n"
     for item in sorted_workout:
         if counter >= 5:
             break
@@ -94,7 +94,8 @@ def leaderboard_command(channel_id):
                     "text": msg_text
                 }
             }
-        ]
+        ],
+        text = msg_text,
     )
 # end post leadboards function
     
