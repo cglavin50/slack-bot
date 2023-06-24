@@ -13,6 +13,11 @@ load_dotenv(dotenv_path=env_path)
 # init web server
 app = Flask(__name__)
 slack_event_adapter = SlackEventAdapter(os.environ["SLACK_SIGNING_SECRET"], '/slack/events', app)
+@app.route('/')
+def hello_world():
+    return "Hello World"
+
+# write the html using <form> attributes on index.html, and serve it for GET ip:port/
 
 # slack init
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
@@ -20,14 +25,15 @@ bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
 
 # redis init
 redis_client = redis.Redis(
-    host='db', # migrate this once reach deployment stage
+    host='localhost', # migrate this once reach deployment stage
     port=6379,
     charset='utf-8',
     decode_responses=True,
 )
 
-# response = redis_client.ping()
-# print(response)
+response = redis_client.ping()
+if response == True:
+    print("Redis connection established")
 
 
 # slack event handlers
@@ -85,7 +91,7 @@ def leaderboard_command(channel_id):
     
     # post message 
     client.chat_postMessage(
-        channel = os.environ["COMMAND_ID"],
+        channel = channel_id,
         blocks = [
             {
                 "type": "section",
