@@ -1,0 +1,17 @@
+name: Publish image to docker hub
+on:
+  [push]
+
+jobs:
+  publish_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: build
+        run : |
+          docker build . -t cglavin50/justice-slack-bot:latest
+      - name: publish
+        run: |
+          docker login -u cglavin50 -p ${{secrets.DOCKER_TOKEN}}
+          docker push cglavin50/justice-slack-bot:latest
