@@ -7,8 +7,8 @@ from slackeventsapi import SlackEventAdapter
 from slack_sdk import WebClient
 
 # env initialization
-env_path = Path('.') / '.env' # stored in root directory
-load_dotenv(dotenv_path=env_path)
+# env_path = Path('.') / '.env' # stored in root directory
+load_dotenv('$HOME/slack-bot/.env')
 
 # init web server
 app = Flask(__name__)
