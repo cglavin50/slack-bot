@@ -25,7 +25,7 @@ bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
 
 # redis init
 redis_client = redis.Redis(
-    host='localhost', # migrate this once reach deployment stage
+    host='db', # migrate this once reach deployment stage
     port=6379,
     charset='utf-8',
     decode_responses=True,
