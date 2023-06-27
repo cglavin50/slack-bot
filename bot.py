@@ -7,10 +7,7 @@ from slackeventsapi import SlackEventAdapter
 from slack_sdk import WebClient
 
 # env initialization
-# env_path = Path('.') / '.env' # stored in root directory
-#load_dotenv(find_dotenv()) # works when .env is stored in same folder, added for weird vm issues
-print(".env path: " + find_dotenv())
-load_dotenv(find_dotenv(), verbose=True)
+load_dotenv(find_dotenv(), verbose=True) # searches locally, could be optimized later
 
 
 
@@ -137,4 +134,4 @@ def update_counts(uid, channel_id):
 # end update counts function
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port = 80, debug=True)
