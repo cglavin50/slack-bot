@@ -10,7 +10,7 @@ from slack_sdk import WebClient
 # env_path = Path('.') / '.env' # stored in root directory
 #load_dotenv(find_dotenv()) # works when .env is stored in same folder, added for weird vm issues
 print(".env path: " + find_dotenv())
-load_dotenv(find_dotenv())
+load_dotenv(find_dotenv(), verbose=True)
 
 
 
