@@ -8,7 +8,7 @@ from slack_sdk import WebClient
 
 # env initialization
 # env_path = Path('.') / '.env' # stored in root directory
-load_dotenv('$HOME/slack-bot/.env')
+load_dotenv('/home/ubuntu/slack-bot/.env')
 
 # init web server
 app = Flask(__name__)
