@@ -8,7 +8,11 @@ from slack_sdk import WebClient
 
 # env initialization
 # env_path = Path('.') / '.env' # stored in root directory
-load_dotenv(find_dotenv()) # works when .env is stored in same folder, added for weird vm issues
+#load_dotenv(find_dotenv()) # works when .env is stored in same folder, added for weird vm issues
+print(".env path: " + find_dotenv())
+load_dotenv(find_dotenv())
+
+
 
 # init web server
 app = Flask(__name__)
