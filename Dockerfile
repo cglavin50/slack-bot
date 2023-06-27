@@ -7,6 +7,3 @@ RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY . .
 # copy everything else over into code subdirectory
-
-# CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
-# test if can run without module mode
