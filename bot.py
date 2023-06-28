@@ -75,14 +75,14 @@ def leaderboard_command(channel_id):
     msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
     counter = 1
     for item in sorted_throwing:
-        if counter >= 3:
+        if counter > 3:
             break
         msg_text += str(counter) + ". " + item[0].replace("throwing", "") + "\n\t"
         counter += 1
-    counter = 0
+    counter = 1
     msg_text += "\n\t*Workouts Leaderboard* :muscle:\n"
     for item in sorted_workout:
-        if counter >= 3:
+        if counter > 3:
             break
         msg_text += str(counter) + ". " + item[0].replace("workout", "") + "\n\t"
         counter += 1
