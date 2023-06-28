@@ -21,7 +21,7 @@ def hello_world():
 # slack init
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
-default_reaction = ":orangutan"
+default_reaction = ":orangutan:"
 
 # redis init
 redis_client = redis.Redis(
