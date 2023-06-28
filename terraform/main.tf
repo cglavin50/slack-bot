@@ -3,7 +3,13 @@ resource "aws_lightsail_instance" "lightsail_instance" {
   name              = var.project_name                      ## Name of lightsail instance in AWS
   availability_zone = "${var.aws_region}a"                  ## AZ
   blueprint_id      = var.lightsail_blueprints["ubuntu"] ## Options for "wordpress"
-  bundle_id         = var.bundle_id                         ## Options for instance size
+  bundle_id         = var.bundle_id        ## Options for instance size  
+  
+  add_on {
+    type = "AutoSnapshot"
+    snapshot_time = "21:00"
+    status = "Enabled"
+  }                
 }
 ## Creates a static public IP address on Lightsail
 resource "aws_lightsail_static_ip" "static_ip" {
