@@ -40,7 +40,7 @@ if response == True:
 
 @slack_event_adapter.on('message')
 def message(payload):
-    print(payload)
+    print(payload, flush=True)
     timestamp = payload.get('ts')
     event = payload.get('event', {})
     text = event.get('text')
