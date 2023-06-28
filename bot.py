@@ -44,17 +44,15 @@ def message(payload):
     event = payload.get('event', {})
     text = event.get('text')
     timestamp = event.get('ts')
-    print("timestamp " + timestamp, flush=True)
     channel_id = event.get('channel')
     uid = event.get('user')
 
     if text == "!leaderboards" and uid != bot_id:
-        print("Printing leaderboard updates")
+        print("Printing leaderboard updates", flush=True)
         leaderboard_command(channel_id)
     else:
         files = event.get('files')
         if files:
-            print("Files attached") # files is an array of attachments (files), each one a map
             update_counts(uid, channel_id, timestamp)
 # end message handler
 
@@ -115,10 +113,10 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
     # throwing_channel =  os.environ["THROW_ID"]
     throwing_channel = os.environ["COMMAND_ID"]
     if channel_id == workout_channel:
-        print("Incrementing workout count for " + real_name + " ("+display_name+")")
+        print("Incrementing workout count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " workout"
     elif channel_id == throwing_channel:
-        print("Incrementing throwing count for " + real_name + " ("+display_name+")")
+        print("Incrementing throwing count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " throwing"
     
     print(key)
