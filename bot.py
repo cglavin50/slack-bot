@@ -43,7 +43,7 @@ def message(payload):
     # print(payload, flush=True)
     event = payload.get('event', {})
     text = event.get('text')
-    timestamp = event.get('timestamp')
+    timestamp = event.get('ts')
     print("timestamp " + timestamp, flush=True)
     channel_id = event.get('channel')
     uid = event.get('user')
