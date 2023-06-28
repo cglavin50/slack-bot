@@ -40,6 +40,7 @@ if response == True:
 
 @slack_event_adapter.on('message')
 def message(payload):
+    print(payload)
     timestamp = payload.get('ts')
     event = payload.get('event', {})
     text = event.get('text')
@@ -104,15 +105,14 @@ def leaderboard_command(channel_id):
 # end post leadboards function
     
 
-def update_counts(uid, channel_id, ts):
-    # this function should increment the count of a given user to the redis DB
-    print("timestamp: " + ts)
+def update_counts(uid, channel_id, ts): # this function should increment the count of a given user to the redis DB
     response = client.users_profile_get(user=uid)
     user_profile = response.get("profile")
     real_name = user_profile.get("real_name")
     display_name = user_profile.get("display_name")
     workout_channel = os.environ["WORKOUT_ID"]
-    throwing_channel =  os.environ["THROW_ID"]
+    # throwing_channel =  os.environ["THROW_ID"]
+    throwing_channel = os.environ["COMMAND_ID"]
     if channel_id == workout_channel:
         print("Incrementing workout count for " + real_name + " ("+display_name+")")
         key = real_name + " workout"
