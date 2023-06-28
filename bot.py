@@ -104,8 +104,9 @@ def leaderboard_command(channel_id):
 # end post leadboards function
     
 
-def update_counts(uid, channel_id, timestamp):
+def update_counts(uid, channel_id, ts):
     # this function should increment the count of a given user to the redis DB
+    print("timestamp: " + ts)
     response = client.users_profile_get(user=uid)
     user_profile = response.get("profile")
     real_name = user_profile.get("real_name")
@@ -129,7 +130,7 @@ def update_counts(uid, channel_id, timestamp):
 
 
     # finally, react to the message to show we processed it
-    client.reactions_add(channel=channel_id, name=default_reaction, timestamp=timestamp)
+    client.reactions_add(channel=channel_id, name=default_reaction, timestamp=ts)
 # end update counts function
 
 if __name__ == "__main__":
