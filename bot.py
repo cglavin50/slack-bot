@@ -9,8 +9,6 @@ from slack_sdk import WebClient
 # env initialization
 load_dotenv(find_dotenv(), verbose=True) # searches locally, could be optimized later
 
-
-
 # init web server
 app = Flask(__name__)
 slack_event_adapter = SlackEventAdapter(os.environ["SLACK_SIGNING_SECRET"], '/slack/events', app)
@@ -23,6 +21,7 @@ def hello_world():
 # slack init
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
+default_reaction = ":orangutan"
 
 # redis init
 redis_client = redis.Redis(
@@ -41,7 +40,7 @@ if response == True:
 
 @slack_event_adapter.on('message')
 def message(payload):
-    # print(payload)
+    timestamp = payload.get('ts')
     event = payload.get('event', {})
     text = event.get('text')
     channel_id = event.get('channel')
@@ -54,10 +53,8 @@ def message(payload):
         files = event.get('files')
         if files:
             print("Files attached") # files is an array of attachments (files), each one a map
-            update_counts(uid, channel_id)
-
-        # if uid != bot_id:
-            # client.chat_postMessage(channel=channel_id, text=text)
+            update_counts(uid, channel_id, ts)
+# end message handler
 
 
 def leaderboard_command(channel_id):
@@ -78,16 +75,16 @@ def leaderboard_command(channel_id):
     msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
     counter = 1
     for item in sorted_throwing:
-        if counter >= 5:
+        if counter >= 3:
             break
         msg_text += str(counter) + ". " + item[0].replace("throwing", "") + "\n\t"
         counter += 1
     counter = 0
     msg_text += "\n\t*Workouts Leaderboard* :muscle:\n"
     for item in sorted_workout:
-        if counter >= 5:
+        if counter >= 3:
             break
-        msg_text += str(counter) + ". " + item[0].replace("workout" "") + "\n\t"
+        msg_text += str(counter) + ". " + item[0].replace("workout", "") + "\n\t"
         counter += 1
     
     # post message 
@@ -107,16 +104,14 @@ def leaderboard_command(channel_id):
 # end post leadboards function
     
 
-def update_counts(uid, channel_id):
+def update_counts(uid, channel_id, timestamp):
     # this function should increment the count of a given user to the redis DB
     response = client.users_profile_get(user=uid)
     user_profile = response.get("profile")
     real_name = user_profile.get("real_name")
     display_name = user_profile.get("display_name")
-    # temp
     workout_channel = os.environ["WORKOUT_ID"]
-    # throwing_channel = os.environ["THROW_ID"]
-    throwing_channel =  os.environ["THROW_ID"]# change back to throwing channel shortly
+    throwing_channel =  os.environ["THROW_ID"]
     if channel_id == workout_channel:
         print("Incrementing workout count for " + real_name + " ("+display_name+")")
         key = real_name + " workout"
@@ -131,6 +126,10 @@ def update_counts(uid, channel_id):
         print(redis_client.set(key, updated))
     else:
         print(redis_client.set(key, 1))
+
+
+    # finally, react to the message to show we processed it
+    client.reactions_add(channel=channel_id, name=default_reaction, timestamp=timestamp)
 # end update counts function
 
 if __name__ == "__main__":
