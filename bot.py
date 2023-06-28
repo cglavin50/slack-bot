@@ -44,6 +44,7 @@ def message(payload):
     event = payload.get('event', {})
     text = event.get('text')
     timestamp = event.get('timestamp')
+    print("timestamp " + timestamp, flush=True)
     channel_id = event.get('channel')
     uid = event.get('user')
 
