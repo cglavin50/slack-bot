@@ -53,7 +53,7 @@ def message(payload):
         files = event.get('files')
         if files:
             print("Files attached") # files is an array of attachments (files), each one a map
-            update_counts(uid, channel_id, ts)
+            update_counts(uid, channel_id, timestamp)
 # end message handler
 
 
