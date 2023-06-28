@@ -80,7 +80,7 @@ def leaderboard_command(channel_id):
         msg_text += str(counter) + ". " + item[0].replace("throwing", "") + "\n\t"
         counter += 1
     counter = 1
-    msg_text += "\n\t*Workouts Leaderboard* :muscle:\n"
+    msg_text += "\n\t*Workouts Leaderboard* :muscle:\n\t"
     for item in sorted_workout:
         if counter > 3:
             break
@@ -110,8 +110,8 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
     real_name = user_profile.get("real_name")
     display_name = user_profile.get("display_name")
     workout_channel = os.environ["WORKOUT_ID"]
-    # throwing_channel =  os.environ["THROW_ID"]
-    throwing_channel = os.environ["COMMAND_ID"]
+    throwing_channel =  os.environ["THROW_ID"]
+    # throwing_channel = os.environ["COMMAND_ID"]
     if channel_id == workout_channel:
         print("Incrementing workout count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " workout"
