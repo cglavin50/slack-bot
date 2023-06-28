@@ -40,10 +40,10 @@ if response == True:
 
 @slack_event_adapter.on('message')
 def message(payload):
-    print(payload, flush=True)
-    timestamp = payload.get('ts')
+    # print(payload, flush=True)
     event = payload.get('event', {})
     text = event.get('text')
+    timestamp = event.get('timestamp')
     channel_id = event.get('channel')
     uid = event.get('user')
 
