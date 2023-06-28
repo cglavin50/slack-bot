@@ -3,3 +3,7 @@
 db.py
 *.unused
 *.pem
+# listing all the backend terraform files that are unneeded
+plan
+.terraform
+.terraform.locl.hcl
