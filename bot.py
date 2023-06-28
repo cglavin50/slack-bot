@@ -116,7 +116,7 @@ def update_counts(uid, channel_id):
     # temp
     workout_channel = os.environ["WORKOUT_ID"]
     # throwing_channel = os.environ["THROW_ID"]
-    throwing_channel = "C05C65T6Y07"# change back to throwing channel shortly
+    throwing_channel =  os.environ["THROW_ID"]# change back to throwing channel shortly
     if channel_id == workout_channel:
         print("Incrementing workout count for " + real_name + " ("+display_name+")")
         key = real_name + " workout"
