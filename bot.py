@@ -22,6 +22,7 @@ def hello_world():
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
 default_reaction = "orangutan"
+reactions_list = ["bike", "chris", "ab"]
 
 # redis init
 redis_client = redis.Redis(
@@ -30,14 +31,12 @@ redis_client = redis.Redis(
     charset='utf-8',
     decode_responses=True,
 )
-
 response = redis_client.ping()
 if response == True:
     print("Redis connection established")
 
 
 # slack event handlers
-
 @slack_event_adapter.on('message')
 def message(payload):
     # print(payload, flush=True)
@@ -129,6 +128,9 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
 
 
     # finally, react to the message to show we processed it
+    reaction = default_reaction
+    if real_name == "Chris Strawn":
+        reaction = "chris"
     client.reactions_add(channel=channel_id, name=default_reaction, timestamp=ts)
 # end update counts function
 
