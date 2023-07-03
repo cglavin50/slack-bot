@@ -21,12 +21,9 @@ def hello_world():
 # slack init
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
-<<<<<<< HEAD
-default_reaction = "orangutan"
 reactions_list = ["bike", "chris", "ab"]
-=======
 default_reaction = "robot_face"
->>>>>>> 9732c6fd353f4d009773700daefb82f8fd7ca77c
+
 
 # redis init
 redis_client = redis.Redis(
@@ -135,7 +132,7 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
     reaction = default_reaction
     if real_name == "Chris Strawn":
         reaction = "chris"
-    client.reactions_add(channel=channel_id, name=default_reaction, timestamp=ts)
+    client.reactions_add(channel=channel_id, name=reaction, timestamp=ts)
 # end update counts function
 
 if __name__ == "__main__":
