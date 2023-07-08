@@ -77,14 +77,14 @@ def leaderboard_command(channel_id):
     for item in sorted_throwing:
         if counter > 3:
             break
-        msg_text += str(counter) + ". " + item[0].replace("throwing", "") + ": " + item[1] + "\n\t"
+        msg_text += str(counter) + ". " + item[0].replace(" throwing", "") + ": " + item[1] + "\n\t"
         counter += 1
     counter = 1
     msg_text += "\n\t*Workouts Leaderboard* :muscle:\n\t"
     for item in sorted_workout:
         if counter > 3:
             break
-        msg_text += str(counter) + ". " + item[0].replace("workout", "") + ": " + item[1] + "\n\t"
+        msg_text += str(counter) + ". " + item[0].replace(" workout", "") + ": " + item[1] + "\n\t"
         counter += 1
     
     # post message 
@@ -121,6 +121,7 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
     
     print(key)
     value = redis_client.get(real_name)
+    print("Count: " + value)
     if value:
         updated = int(value) + 1
         print(redis_client.set(key, updated))
