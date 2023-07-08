@@ -72,6 +72,7 @@ def leaderboard_command(channel_id):
     # order dict for leadboards
     sorted_throwing = sorted(throwing_dict.items(), key=lambda x:x[1], reverse=True) # figure out this lambda later
     sorted_workout = sorted(workout_dict.items(), key=lambda x:x[1], reverse=True)
+    '''
     msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
     counter = 1
     for item in sorted_throwing:
@@ -101,6 +102,11 @@ def leaderboard_command(channel_id):
         ],
         text = msg_text,
     )
+    '''
+    for item in sorted_throwing:
+        print(item[0])
+    for item in sorted_workout:
+        print(item[0])
 # end post leadboards function
     
 
