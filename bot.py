@@ -72,7 +72,7 @@ def leaderboard_command(channel_id):
     # order dict for leadboards
     sorted_throwing = sorted(throwing_dict.items(), key=lambda x:x[1], reverse=True) # figure out this lambda later
     sorted_workout = sorted(workout_dict.items(), key=lambda x:x[1], reverse=True)
-    '''
+
     msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
     counter = 1
     for item in sorted_throwing:
@@ -102,11 +102,6 @@ def leaderboard_command(channel_id):
         ],
         text = msg_text,
     )
-    '''
-    for item in sorted_throwing:
-        print(item[0])
-    for item in sorted_workout:
-        print(item[0])
 # end post leadboards function
     
 
@@ -117,18 +112,16 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
     display_name = user_profile.get("display_name")
     workout_channel = os.environ["WORKOUT_ID"]
     throwing_channel =  os.environ["THROW_ID"]
-    # throwing_channel = os.environ["COMMAND_ID"]
     key = ""
-    if channel_id == "C05G4RTGDSN":
+    if channel_id == workout_channel:
         print("Incrementing workout count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " workout"
     elif channel_id == throwing_channel:
         print("Incrementing throwing count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " throwing"
     
-    print(key)
+    
     value = redis_client.get(key)
-    print("Count: " + value)
     if value:
         updated = int(value) + 1
         print(redis_client.set(key, updated))
