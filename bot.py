@@ -112,7 +112,7 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
     workout_channel = os.environ["WORKOUT_ID"]
     throwing_channel =  os.environ["THROW_ID"]
     # throwing_channel = os.environ["COMMAND_ID"]
-    if channel_id == workout_channel:
+    if channel_id == "C05G4RTGDSN":
         print("Incrementing workout count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " workout"
     elif channel_id == throwing_channel:
