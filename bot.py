@@ -77,14 +77,14 @@ def leaderboard_command(channel_id):
     for item in sorted_throwing:
         if counter > 3:
             break
-        msg_text += str(counter) + ". " + item[0].replace("throwing", "") + "\n\t"
+        msg_text += str(counter) + ". " + item[0].replace("throwing", "") + ": " + item[1] + "\n\t"
         counter += 1
     counter = 1
     msg_text += "\n\t*Workouts Leaderboard* :muscle:\n\t"
     for item in sorted_workout:
         if counter > 3:
             break
-        msg_text += str(counter) + ". " + item[0].replace("workout", "") + "\n\t"
+        msg_text += str(counter) + ". " + item[0].replace("workout", "") + ": " + item[1] + "\n\t"
         counter += 1
     
     # post message 
