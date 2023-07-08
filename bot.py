@@ -118,6 +118,7 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
     workout_channel = os.environ["WORKOUT_ID"]
     throwing_channel =  os.environ["THROW_ID"]
     # throwing_channel = os.environ["COMMAND_ID"]
+    key = ""
     if channel_id == "C05G4RTGDSN":
         print("Incrementing workout count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " workout"
@@ -125,8 +126,8 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
         print("Incrementing throwing count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " throwing"
     
-    # print(key)
-    value = redis_client.get(real_name)
+    print(key)
+    value = redis_client.get(key)
     print("Count: " + value)
     if value:
         updated = int(value) + 1
