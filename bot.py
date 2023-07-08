@@ -61,6 +61,7 @@ def leaderboard_command(channel_id):
     # write a command to check the DB and send a leaderboard update to given channel
     # should cache this as well
     
+    redis_client.set("Cooper Glavin workout", 1)
     # append all key : value pairs to a dict
     throwing_dict = {}
     workout_dict = {}
@@ -120,7 +121,7 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
         print("Incrementing throwing count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " throwing"
     
-    
+
     value = redis_client.get(key)
     if value:
         updated = int(value) + 1
