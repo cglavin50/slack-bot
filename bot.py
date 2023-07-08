@@ -61,7 +61,6 @@ def leaderboard_command(channel_id):
     # write a command to check the DB and send a leaderboard update to given channel
     # should cache this as well
     
-    redis_client.set("Cooper Glavin workout", 1)
     # append all key : value pairs to a dict
     throwing_dict = {}
     workout_dict = {}
