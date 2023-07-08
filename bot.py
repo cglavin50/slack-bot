@@ -119,7 +119,7 @@ def update_counts(uid, channel_id, ts): # this function should increment the cou
         print("Incrementing throwing count for " + real_name + " ("+display_name+")", flush=True)
         key = real_name + " throwing"
     
-    print(key)
+    # print(key)
     value = redis_client.get(real_name)
     print("Count: " + value)
     if value:
