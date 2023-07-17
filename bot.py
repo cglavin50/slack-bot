@@ -80,6 +80,20 @@ def list_db(channel_id): # for debugging
     for item in sorted_workout:
         msg_text += item[0].replace(" workout", "") + ": " + item[1] + "\n\t"
 
+    # post message 
+    client.chat_postMessage(
+        channel = channel_id,
+        blocks = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": msg_text
+                }
+            }
+        ],
+        text = msg_text,
+    )
 
 def leaderboard_command(channel_id):
     # write a command to check the DB and send a leaderboard update to given channel
