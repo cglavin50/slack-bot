@@ -108,8 +108,8 @@ def leaderboard_command(channel_id):
         if "workout" in key:
             workout_dict[key] = redis_client.get(key)
     # order dict for leadboards
-    sorted_throwing = sorted(throwing_dict.items(), key=lambda x:x[1], reverse=True) # figure out this lambda later
-    sorted_workout = sorted(workout_dict.items(), key=lambda x:x[1], reverse=True)
+    sorted_throwing = sorted(throwing_dict.items(), key=lambda x:int(x[1]), reverse=True) # figure out this lambda later
+    sorted_workout = sorted(workout_dict.items(), key=lambda x:int(x[1]), reverse=True)
 
     msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
     counter = 1
