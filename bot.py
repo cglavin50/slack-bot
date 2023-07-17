@@ -47,6 +47,9 @@ def message(payload):
     channel_id = event.get('channel')
     uid = event.get('user')
 
+    if text == "!list" and uid != bot_id:
+        list_db(channel_id)
+
     if text == "!leaderboards" and uid != bot_id:
         print("Printing leaderboard updates", flush=True)
         leaderboard_command(channel_id)
@@ -55,6 +58,27 @@ def message(payload):
         if files:
             update_counts(uid, channel_id, timestamp)
 # end message handler
+
+def list_db(channel_id): # for debugging
+    throwing_dict = {}
+    workout_dict = {}
+    for key in redis_client.scan_iter():
+        if "throwing" in key:
+            throwing_dict[key] = redis_client.get(key)
+        if "workout" in key:
+            workout_dict[key] = redis_client.get(key)
+    
+    sorted_throwing = sorted(throwing_dict.items(), key=lambda x:x[1], reverse=True) # figure out this lambda later
+    sorted_workout = sorted(workout_dict.items(), key=lambda x:x[1], reverse=True)
+
+
+
+    msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
+    for item in sorted_throwing:
+        msg_text += item[0].replace(" throwing", "") + ": " + item[1] + "\n\t"
+    msg_text += "\n\t*Workouts Leaderboard* :muscle:\n\t"
+    for item in sorted_workout:
+        msg_text += item[0].replace(" workout", "") + ": " + item[1] + "\n\t"
 
 
 def leaderboard_command(channel_id):
