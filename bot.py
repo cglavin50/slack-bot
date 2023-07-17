@@ -68,8 +68,8 @@ def list_db(channel_id): # for debugging
         if "workout" in key:
             workout_dict[key] = redis_client.get(key)
     
-    sorted_throwing = sorted(throwing_dict.items(), key=lambda x:x[1], reverse=True) # figure out this lambda later
-    sorted_workout = sorted(workout_dict.items(), key=lambda x:x[1], reverse=True)
+    sorted_throwing = sorted(throwing_dict.items(), key=lambda x:int(x[1]), reverse=True) # figure out this lambda later
+    sorted_workout = sorted(workout_dict.items(), key=lambda x:int(x[1]), reverse=True)
 
 
 
