@@ -62,14 +62,14 @@ def message(payload):
 # end message handler
 
 def parse_text(sender, txt): # takes in UID of the sender, and the text to see if there are any more mentioned user IDs
-    response = client.users_profile_get(sender) 
+    response = client.users_profile_get(user = sender) 
     user_profile = response.get("profile")
     real_name = user_profile.get("real_name")
     users = [real_name]
     split = txt.split("@") # looking for any mentioned user IDs
     for str in split:
         try:
-            response = client.users_profile_get(str)
+            response = client.users_profile_get(user = str)
             user_profile = response.get("profile")
             real_name = user_profile.get("real_name")
             print(real_name + " mentioned in a message")
