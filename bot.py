@@ -68,7 +68,7 @@ def parse_text(sender, txt): # takes in UID of the sender, and the text to see i
     user_profile = response.get("profile")
     real_name = user_profile.get("real_name")
     users = [real_name]
-    split = txt.strip('<', '>').split("@") # looking for any mentioned user IDs
+    split = txt.strip('<>').split("@") # looking for any mentioned user IDs
     for str in split:
         try:
             response = client.users_profile_get(user = str)
