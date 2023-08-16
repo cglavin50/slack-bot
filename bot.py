@@ -49,7 +49,6 @@ def message(payload):
     channel_id = event.get('channel')
     uid = event.get('user')
     text = event.get('text')
-    users = parse_text(uid, text)
 
     if text == "!list" and uid != bot_id:
         list_db(channel_id)
@@ -58,6 +57,7 @@ def message(payload):
         print("Printing leaderboard updates", flush=True)
         leaderboard_command(channel_id)
     else:
+        users = parse_text(uid, text)
         files = event.get('files')
         if files:
             update_counts(users, channel_id, timestamp)
@@ -74,10 +74,10 @@ def parse_text(sender, txt): # takes in UID of the sender, and the text to see i
             response = client.users_profile_get(user = str)
             user_profile = response.get("profile")
             real_name = user_profile.get("real_name")
-            print(real_name + " mentioned in a message")
+            print(real_name + " mentioned in a message", flush=True)
             users = users.append(real_name)
         except:
-            print("Unidentified user mentioned in message: " + str)
+            print("Unidentified user mentioned in message: " + str, flush=True)
             continue
     # populate user array with any mentioned users
     return users
