@@ -7,3 +7,4 @@ db.py
 plan
 .terraform
 .terraform.locl.hcl
+terraform
