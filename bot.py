@@ -35,7 +35,9 @@ redis_client = redis.Redis(
 response = redis_client.ping()
 if response == True:
     print("Redis connection established")
-
+else:
+    print("Redis connection failed")
+    quit
 
 # slack event handlers
 @slack_event_adapter.on('message')
