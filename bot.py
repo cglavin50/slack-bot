@@ -49,6 +49,9 @@ def message(payload):
     text = event.get('text')
     users = parse_text(uid, text)
 
+    if text == "!list" and uid != bot_id:
+        list_db(channel_id)
+
     if text == "!leaderboards" and uid != bot_id:
         print("Printing leaderboard updates", flush=True)
         leaderboard_command(channel_id)
@@ -77,6 +80,41 @@ def parse_text(sender, txt): # takes in UID of the sender, and the text to see i
     # populate user array with any mentioned users
     return users
     
+def list_db(channel_id): # for debugging
+    throwing_dict = {}
+    workout_dict = {}
+    for key in redis_client.scan_iter():
+        if "throwing" in key:
+            throwing_dict[key] = redis_client.get(key)
+        if "workout" in key:
+            workout_dict[key] = redis_client.get(key)
+    
+    sorted_throwing = sorted(throwing_dict.items(), key=lambda x:int(x[1]), reverse=True) # figure out this lambda later
+    sorted_workout = sorted(workout_dict.items(), key=lambda x:int(x[1]), reverse=True)
+
+
+
+    msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
+    for item in sorted_throwing:
+        msg_text += item[0].replace(" throwing", "") + ": " + item[1] + "\n\t"
+    msg_text += "\n\t*Workouts Leaderboard* :muscle:\n\t"
+    for item in sorted_workout:
+        msg_text += item[0].replace(" workout", "") + ": " + item[1] + "\n\t"
+
+    # post message 
+    client.chat_postMessage(
+        channel = channel_id,
+        blocks = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": msg_text
+                }
+            }
+        ],
+        text = msg_text,
+    )
 
 def leaderboard_command(channel_id):
     # write a command to check the DB and send a leaderboard update to given channel
@@ -91,8 +129,8 @@ def leaderboard_command(channel_id):
         if "workout" in key:
             workout_dict[key] = redis_client.get(key)
     # order dict for leadboards
-    sorted_throwing = sorted(throwing_dict.items(), key=lambda x:x[1], reverse=True) # figure out this lambda later
-    sorted_workout = sorted(workout_dict.items(), key=lambda x:x[1], reverse=True)
+    sorted_throwing = sorted(throwing_dict.items(), key=lambda x:int(x[1]), reverse=True) # figure out this lambda later
+    sorted_workout = sorted(workout_dict.items(), key=lambda x:int(x[1]), reverse=True)
 
     msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
     counter = 1
