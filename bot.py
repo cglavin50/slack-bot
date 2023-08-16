@@ -56,7 +56,7 @@ def message(payload):
     if text == "!leaderboards" and uid != bot_id:
         print("Printing leaderboard updates", flush=True)
         leaderboard_command(channel_id)
-    else:
+    elif uid != bot_id:
         users = parse_text(uid, text)
         files = event.get('files')
         if files:
@@ -68,7 +68,7 @@ def parse_text(sender, txt): # takes in UID of the sender, and the text to see i
     user_profile = response.get("profile")
     real_name = user_profile.get("real_name")
     users = [real_name]
-    split = txt.split("@") # looking for any mentioned user IDs
+    split = txt.split("@").strip('<', '>') # looking for any mentioned user IDs
     for str in split:
         try:
             response = client.users_profile_get(user = str)
