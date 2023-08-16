@@ -21,7 +21,7 @@ def hello_world():
 # slack init
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
-reactions_list = ["bike", "chris", "ab"]
+reactions_list = ["bike", "chris", "ab", "schmitty"]
 default_reaction = "robot_face"
 
 
@@ -46,6 +46,8 @@ def message(payload):
     timestamp = event.get('ts')
     channel_id = event.get('channel')
     uid = event.get('user')
+    text = event.get('text')
+    users = parse_text(uid, text)
 
     if text == "!leaderboards" and uid != bot_id:
         print("Printing leaderboard updates", flush=True)
@@ -53,9 +55,28 @@ def message(payload):
     else:
         files = event.get('files')
         if files:
-            update_counts(uid, channel_id, timestamp)
+            update_counts(users, channel_id, timestamp)
 # end message handler
 
+def parse_text(sender, txt): # takes in UID of the sender, and the text to see if there are any more mentioned user IDs
+    response = client.users_profile_get(sender) 
+    user_profile = response.get("profile")
+    real_name = user_profile.get("real_name")
+    users = [real_name]
+    split = txt.split("@") # looking for any mentioned user IDs
+    for str in split:
+        try:
+            response = client.users_profile_get(str)
+            user_profile = response.get("profile")
+            real_name = user_profile.get("real_name")
+            print(real_name + " mentioned in a message")
+            users = users.append(real_name)
+        except:
+            print("Unidentified user mentioned in message: " + str)
+            continue
+    # populate user array with any mentioned users
+    return users
+    
 
 def leaderboard_command(channel_id):
     # write a command to check the DB and send a leaderboard update to given channel
@@ -105,34 +126,39 @@ def leaderboard_command(channel_id):
 # end post leadboards function
     
 
-def update_counts(uid, channel_id, ts): # this function should increment the count of a given user to the redis DB
-    response = client.users_profile_get(user=uid)
-    user_profile = response.get("profile")
-    real_name = user_profile.get("real_name")
-    display_name = user_profile.get("display_name")
-    workout_channel = os.environ["WORKOUT_ID"]
-    throwing_channel =  os.environ["THROW_ID"]
-    key = ""
-    if channel_id == workout_channel:
-        print("Incrementing workout count for " + real_name + " ("+display_name+")", flush=True)
-        key = real_name + " workout"
-    elif channel_id == throwing_channel:
-        print("Incrementing throwing count for " + real_name + " ("+display_name+")", flush=True)
-        key = real_name + " throwing"
-    
+def update_counts(names, channel_id, ts): # takes in array of user real names, and increments the keys accordingly
+    # response = client.users_profile_get(user=uid)
+    real_name = names[0]
+    for name in names:
+        # user_profile = response.get("profile")
+        # real_name = user_profile.get("real_name")
+        # display_name = user_profile.get("display_name")
+        workout_channel = os.environ["WORKOUT_ID"]
+        throwing_channel =  os.environ["THROW_ID"]
+        key = ""
+        if channel_id == workout_channel:
+            # print("Incrementing workout count for " + real_name + " ("+display_name+")", flush=True)
+            key = name + " workout"
+        elif channel_id == throwing_channel:
+            # print("Incrementing throwing count for " + real_name + " ("+display_name+")", flush=True)
+            key = name + " throwing"
 
-    value = redis_client.get(key)
-    if value:
-        updated = int(value) + 1
-        print(redis_client.set(key, updated))
-    else:
-        print(redis_client.set(key, 1))
-
+        value = redis_client.get(key)
+        if value:
+            updated = int(value) + 1
+            print(redis_client.set(key, updated))
+        else:
+            print(redis_client.set(key, 1))
+    # update each mentioned user (including that who posted it)
 
     # finally, react to the message to show we processed it
     reaction = default_reaction
     if real_name == "Chris Strawn":
         reaction = "chris"
+    if real_name == "Thomas Schmitt":
+        reaction = "schmitty"
+    if real_name == "Erik Anaya":
+        reaction = "erik"
     client.reactions_add(channel=channel_id, name=reaction, timestamp=ts)
 # end update counts function
 
