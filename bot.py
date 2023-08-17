@@ -1,5 +1,6 @@
 import os
 import redis
+import random
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 from flask import Flask
@@ -21,7 +22,7 @@ def hello_world():
 # slack init
 client = WebClient(token=os.environ['SLACK_BOT_TOKEN'])
 bot_id = client.api_call("auth.test")['user_id'] # fetch bot information
-reactions_list = ["bike", "chris", "ab", "schmitty"]
+reactions_list = ["bike", "chris", "ab", "schmitty", "hawk", "ezra", "erik", "cooper", "beard_simon", "tupp"]
 default_reaction = "robot_face"
 
 
@@ -81,6 +82,7 @@ def parse_text(sender, txt): # takes in UID of the sender, and the text to see i
             continue
     # populate user array with any mentioned users
     return users
+# end parse_text function
     
 def list_db(channel_id): # for debugging
     throwing_dict = {}
@@ -93,7 +95,6 @@ def list_db(channel_id): # for debugging
     
     sorted_throwing = sorted(throwing_dict.items(), key=lambda x:int(x[1]), reverse=True) # figure out this lambda later
     sorted_workout = sorted(workout_dict.items(), key=lambda x:int(x[1]), reverse=True)
-
 
 
     msg_text = "*Justice Summer Leaderboards*\n\n\t*Throwing Leaderboard* :flying_disc:\n\t"
@@ -117,6 +118,7 @@ def list_db(channel_id): # for debugging
         ],
         text = msg_text,
     )
+# end list (extended leaderboard) function
 
 def leaderboard_command(channel_id):
     # write a command to check the DB and send a leaderboard update to given channel
@@ -164,23 +166,47 @@ def leaderboard_command(channel_id):
         text = msg_text,
     )
 # end post leadboards function
+
+def mini(message): # create a poll to select mini times
+    reaction_list = random.sample(reaction_list, 4)
+    
+    times = message.split(" ")
+    start = times[1]
+    # end = times[2]
+    
+    msg_text = '''
+    **React to Vote for Mini Times**
+    > ${reaction_list[0]} to vote for ${start}
+    
+    > ${reaction_list[1]} to vote for ${start + 1}
+    
+    '''
+    
+    client.chat_postMessage(
+        channel = os.environ["MINI_ID"],
+        blocks = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": msg_text
+                }
+            }
+        ],
+        text = msg_text,
+    )
+# end mini function
     
 
 def update_counts(names, channel_id, ts): # takes in array of user real names, and increments the keys accordingly
-    # response = client.users_profile_get(user=uid)
     real_name = names[0]
     for name in names:
-        # user_profile = response.get("profile")
-        # real_name = user_profile.get("real_name")
-        # display_name = user_profile.get("display_name")
         workout_channel = os.environ["WORKOUT_ID"]
         throwing_channel =  os.environ["THROW_ID"]
         key = ""
         if channel_id == workout_channel:
-            # print("Incrementing workout count for " + real_name + " ("+display_name+")", flush=True)
             key = name + " workout"
         elif channel_id == throwing_channel:
-            # print("Incrementing throwing count for " + real_name + " ("+display_name+")", flush=True)
             key = name + " throwing"
 
         value = redis_client.get(key)
@@ -199,8 +225,21 @@ def update_counts(names, channel_id, ts): # takes in array of user real names, a
         reaction = "schmitty"
     if real_name == "Erik Anaya":
         reaction = "erik"
+    if real_name == "Cooper Glavin":
+        reaction = "cooper"
+    if real_name == "Ezra Tinksy":
+        reaction = "ezra"
+    if real_name == "Simon Mulrooney":
+        reaction = "beard_simon"
+    if real_name == "Michael Gordon":
+        reaction = "tupp"
+    if real_name == "Isaac Hawkins":
+        reaction = "hawk"
+    
     client.reactions_add(channel=channel_id, name=reaction, timestamp=ts)
 # end update counts function
+
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port = 80, debug=True)
