@@ -235,6 +235,8 @@ def update_counts(names, channel_id, ts): # takes in array of user real names, a
         reaction = "tupp"
     if real_name == "Isaac Hawkins":
         reaction = "hawk"
+    if real_name == "Yinderman de la Routicus":
+        reaction = "paul"
     
     client.reactions_add(channel=channel_id, name=reaction, timestamp=ts)
 # end update counts function
