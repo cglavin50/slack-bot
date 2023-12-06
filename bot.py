@@ -1,7 +1,5 @@
 import os
 import redis
-import random
-from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 from flask import Flask
 from slackeventsapi import SlackEventAdapter
@@ -10,7 +8,7 @@ from slack_sdk import WebClient
 # env initialization
 load_dotenv(find_dotenv(), verbose=True) # searches locally, could be optimized later
 
-# init web server
+# init web server TODO
 app = Flask(__name__)
 slack_event_adapter = SlackEventAdapter(os.environ["SLACK_SIGNING_SECRET"], '/slack/events', app)
 @app.route('/')
@@ -61,7 +59,7 @@ def message(payload):
         users = parse_text(uid, text)
         files = event.get('files')
         if files:
-            update_counts(users, channel_id, timestamp)
+            update_counts(users, channel_id, timestamp, text)
 # end message handler
 
 def parse_text(sender, txt): # takes in UID of the sender, and the text to see if there are any more mentioned user IDs
@@ -167,54 +165,57 @@ def leaderboard_command(channel_id):
     )
 # end post leadboards function
 
-def mini(message): # create a poll to select mini times
-    reaction_list = random.sample(reaction_list, 4)
+# def mini(message): # create a poll to select mini times
+#     reaction_list = random.sample(reaction_list, 4)
     
-    times = message.split(" ")
-    start = times[1]
-    # end = times[2]
+#     times = message.split(" ")
+#     start = times[1]
+#     # end = times[2]
     
-    msg_text = '''
-    **React to Vote for Mini Times**
-    > ${reaction_list[0]} to vote for ${start}
+#     msg_text = '''
+#     **React to Vote for Mini Times**
+#     > ${reaction_list[0]} to vote for ${start}
     
-    > ${reaction_list[1]} to vote for ${start + 1}
+#     > ${reaction_list[1]} to vote for ${start + 1}
     
-    '''
+#     '''
     
-    client.chat_postMessage(
-        channel = os.environ["MINI_ID"],
-        blocks = [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": msg_text
-                }
-            }
-        ],
-        text = msg_text,
-    )
+#     client.chat_postMessage(
+#         channel = os.environ["MINI_ID"],
+#         blocks = [
+#             {
+#                 "type": "section",
+#                 "text": {
+#                     "type": "mrkdwn",
+#                     "text": msg_text
+#                 }
+#             }
+#         ],
+#         text = msg_text,
+#     ) # TODO: add implementation to send mini times as a survey
 # end mini function
     
 
-def update_counts(names, channel_id, ts): # takes in array of user real names, and increments the keys accordingly
+def update_counts(names, channel_id, ts, text): # takes in array of user real names, and increments the keys accordingly
     real_name = names[0]
     for name in names:
         workout_channel = os.environ["WORKOUT_ID"]
         throwing_channel =  os.environ["THROW_ID"]
         key = ""
         if channel_id == workout_channel:
-            key = name + " workout"
+            # key = name + " workout"
+            keys: [] = extract_workout_key(name, text)
         elif channel_id == throwing_channel:
-            key = name + " throwing"
+            keys: [] = [name + " throwing"]
 
         value = redis_client.get(key)
         if value:
             updated = int(value) + 1
-            print(redis_client.set(key, updated))
+            for key in keys:
+                print(redis_client.set(key, updated))
         else:
-            print(redis_client.set(key, 1))
+            for key in keys:
+                print(redis_client.set(key, 1))
     # update each mentioned user (including that who posted it)
 
     # finally, react to the message to show we processed it
@@ -241,7 +242,23 @@ def update_counts(names, channel_id, ts): # takes in array of user real names, a
     client.reactions_add(channel=channel_id, name=reaction, timestamp=ts)
 # end update counts function
 
-
+def extract_workout_key(name, text): # takes in the text string and appends to proper leaderboard
+    keys = []
+    if "mini" in text:
+        keys.append(name + " agility")
+        keys.append(name + " sprints")
+    elif "lift" in text:
+        keys.append(name + " lift")
+    elif "sprint" in text:
+        keys.append(name + " sprints")
+    elif "mobility" in text:
+        keys.append(name + " mobility")
+    elif "agiity" in text:
+        keys.append(name + " agility")
+    elif "mental" in text:
+        keys.append(name + " mental")
+        
+    return keys
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port = 80, debug=True)
