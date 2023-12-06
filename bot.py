@@ -68,7 +68,7 @@ def parse_text(sender, txt): # takes in UID of the sender, and the text to see i
     real_name = user_profile.get("real_name")
     users = [real_name]
     split = txt.replace("<", " ").replace(">", " ").strip().split("@") # looking for any mentioned user IDs
-    for str in split:
+    for str in split: # inefficient but low cost anyways
         try:
             response = client.users_profile_get(user = str)
             user_profile = response.get("profile")
@@ -199,7 +199,7 @@ def leaderboard_command(channel_id):
 def update_counts(names, channel_id, ts, text): # takes in array of user real names, and increments the keys accordingly
     real_name = names[0]
     for name in names:
-        workout_channel = os.environ["C05J39BKG3S"] # TODO move to workout ID once working
+        workout_channel = "C05J39BKG3S" # os.environ["WORKOUT_ID"] # TODO move to workout ID once working
         throwing_channel =  os.environ["THROW_ID"]
         key = ""
         if channel_id == workout_channel:
