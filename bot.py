@@ -269,13 +269,16 @@ def update_counts(names, channel_id, ts, text): # takes in array of user real na
             # key = name + " workout"
             key = extract_workout_key(name, text)
         elif channel_id == throwing_channel:
-            key =name + " throwing"
+            key = name + " throwing"
             
         value = redis_client.get(key)
+        print(f"Updating key: {key}", flush=True)
         if value:
             updated = int(value) + 1
+            print(f"New value: {updated}", flush=True)
             print(redis_client.set(key, updated))
         else:
+            print(f"Setting to 1", flush=True)
             print(redis_client.set(key, 1))
     # update each mentioned user (including that who posted it)
 
