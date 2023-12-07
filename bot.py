@@ -82,7 +82,7 @@ def parse_text(sender, txt): # takes in UID of the sender, and the text to see i
             user_profile = response.get("profile")
             real_name = user_profile.get("real_name")
             print(real_name + " mentioned in a message", flush=True)
-            users = users.append(real_name)
+            users.append(real_name)
         except:
             print("Unidentified user mentioned in message: " + str, flush=True)
             continue
