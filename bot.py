@@ -55,8 +55,23 @@ def message(payload):
         print("Printing leaderboard updates", flush=True)
         leaderboard_command(channel_id)
     elif text == "!wwc" and uid != bot_id:
+        client.chat_postMessage(
+        channel = channel_id,
+        blocks = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": uid
+                }
+            }
+        ],
+        text = uid,
+    )
         print("Printing wwc")
         wwc_list(channel_id)
+    elif text == "!clear" and uid == os.environ["ADMIN_ID"]:
+        clear()
     elif uid != bot_id:
         users = parse_text(uid, text)
         files = event.get('files')
@@ -220,6 +235,9 @@ def wwc_list(channel_id): # post everyones total by team
     )
 # end wwc leaderboard
             
+def clear():
+    # clear the redis DB
+    redis_client.flushall()
 
 # def mini(message): # create a poll to select mini times
 #     reaction_list = random.sample(reaction_list, 4)
