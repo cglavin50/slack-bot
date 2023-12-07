@@ -55,22 +55,10 @@ def message(payload):
         print("Printing leaderboard updates", flush=True)
         leaderboard_command(channel_id)
     elif text == "!wwc" and uid != bot_id:
-        client.chat_postMessage(
-        channel = channel_id,
-        blocks = [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": uid
-                }
-            }
-        ],
-        text = uid,
-    )
         print("Printing wwc")
         wwc_list(channel_id)
     elif text == "!clear" and uid == os.environ["ADMIN_ID"]:
+        print("Clearing the DB")
         clear()
     elif uid != bot_id:
         users = parse_text(uid, text)
