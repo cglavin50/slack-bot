@@ -53,8 +53,6 @@ def message(payload):
         list_db(channel_id)
     elif text == "!leaderboards" and uid != bot_id:
         print("Printing leaderboard updates", flush=True)
-        if uid == os.environ["ADMIN_ID"]:
-            print("If works", flush=True)
         leaderboard_command(channel_id)
     elif text == "!wwc" and uid != bot_id:
         print("Printing wwc", flush=True)
@@ -261,25 +259,23 @@ def clear():
     
 
 def update_counts(names, channel_id, ts, text): # takes in array of user real names, and increments the keys accordingly
-    real_name = names[0]
+    real_name = names[0] # for each mention name, grab appropriate categories and update
     for name in names:
-        workout_channel = "C05J39BKG3S" # os.environ["WORKOUT_ID"] # TODO move to workout ID once working
+        workout_channel =  os.environ["WORKOUT_ID"] # TODO move to workout ID once working # "C05J39BKG3S"
         throwing_channel =  os.environ["THROW_ID"]
         key = ""
         if channel_id == workout_channel:
             # key = name + " workout"
-            keys: [] = extract_workout_key(name, text)
+            key = extract_workout_key(name, text)
         elif channel_id == throwing_channel:
-            keys: [] = [name + " throwing"]
-
+            key =name + " throwing"
+            
         value = redis_client.get(key)
         if value:
             updated = int(value) + 1
-            for key in keys:
-                print(redis_client.set(key, updated))
+            print(redis_client.set(key, updated))
         else:
-            for key in keys:
-                print(redis_client.set(key, 1))
+            print(redis_client.set(key, 1))
     # update each mentioned user (including that who posted it)
 
     # finally, react to the message to show we processed it
@@ -306,23 +302,23 @@ def update_counts(names, channel_id, ts, text): # takes in array of user real na
     client.reactions_add(channel=channel_id, name=reaction, timestamp=ts)
 # end update counts function
 
-def extract_workout_key(name, text): # takes in the text string and appends to proper leaderboard
-    keys = []
-    if "mini" in text:
-        keys.append(name + " agility")
-        keys.append(name + " sprints")
-    elif "lift" in text:
-        keys.append(name + " lift")
-    elif "sprint" in text:
-        keys.append(name + " sprints")
-    elif "mobility" in text:
-        keys.append(name + " mobility")
-    elif "agiity" in text:
-        keys.append(name + " agility")
-    elif "mental" in text:
-        keys.append(name + " mental")
+def extract_workout_key(name, text): # takes in the text string and sends to appropriate leaderboard ASSUMES ONLY ONE CATEGORY PER
+    key = ""
+    if "mini" in text.lower() or "biggie" in text.lower() or "pickup" in text.lower():
+        key = name + " agility"
+        key = name + " sprints"
+    elif "lift" in text.lower():
+        key = name + " lift"
+    elif "sprint" in text.lower():
+        key = name + " sprint"
+    elif "mobility" in text.lower():
+        key = name + " mobility"
+    elif "agiity" in text.lower():
+        key = name + " agility"
+    elif "mental" in text.lower():
+        key = key + " mental"
         
-    return keys
+    return key
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port = 80, debug=True)
