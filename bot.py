@@ -70,6 +70,7 @@ def message(payload):
 # end message handler
 
 def parse_text(sender, txt): # takes in UID of the sender, and the text to see if there are any more mentioned user IDs
+    print("In parse text", flush=True)
     response = client.users_profile_get(user = sender) 
     user_profile = response.get("profile")
     real_name = user_profile.get("real_name")
@@ -86,6 +87,7 @@ def parse_text(sender, txt): # takes in UID of the sender, and the text to see i
             print("Unidentified user mentioned in message: " + str, flush=True)
             continue
     # populate user array with any mentioned users
+    print(f"returning users: $users")
     return users
 # end parse_text function
     
@@ -264,7 +266,7 @@ def clear():
 def update_counts(names, channel_id, ts, text): # takes in array of user real names, and increments the keys accordingly
     real_name = names[0] # for each mention name, grab appropriate categories and update
     for name in names:
-        workout_channel = "C05J39BKG3S" # os.environ["WORKOUT_ID"] # TODO move to workout ID once working # "C05J39BKG3S"
+        workout_channel =  "C05J39BKG3S"# os.environ["WORKOUT_ID"] # TODO move to workout ID once working # "C05J39BKG3S"
         throwing_channel =  os.environ["THROW_ID"]
         key = ""
         if channel_id == workout_channel:
@@ -312,7 +314,7 @@ def extract_workout_key(name, text): # takes in the text string and sends to app
     key = ""
     if "mini" in text.lower() or "biggie" in text.lower() or "pickup" in text.lower():
         key = name + " agility"
-        key = name + " sprints"
+        key = name + " sprint"
     elif "lift" in text.lower():
         key = name + " lift"
     elif "sprint" in text.lower():
