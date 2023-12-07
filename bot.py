@@ -53,12 +53,14 @@ def message(payload):
         list_db(channel_id)
     elif text == "!leaderboards" and uid != bot_id:
         print("Printing leaderboard updates", flush=True)
+        if uid == os.environ["ADMIN_ID"]:
+            print("If works", flush=True)
         leaderboard_command(channel_id)
     elif text == "!wwc" and uid != bot_id:
-        print("Printing wwc")
+        print("Printing wwc", flush=True)
         wwc_list(channel_id)
     elif text == "!clear" and uid == os.environ["ADMIN_ID"]:
-        print("Clearing the DB")
+        print("Clearing the DB", flush=True)
         clear()
     elif uid != bot_id:
         users = parse_text(uid, text)
