@@ -200,7 +200,7 @@ def wwc_list(channel_id): # post everyones total by team
                 value = redis_client.get(key)
                 if value:
                     line_list.append(category + " " + value)
-            line += ", ".join(line_list) + "\n"
+            line += ", ".join(line_list) + "\n\t\t"
             text += line
         message += text + "\n"
         
