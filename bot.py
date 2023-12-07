@@ -62,6 +62,8 @@ def message(payload):
         clear()
     elif uid != bot_id:
         users = parse_text(uid, text)
+        for user in users:
+            print(f"user from parse-text: {user}", flush=True)
         files = event.get('files')
         if files:
             update_counts(users, channel_id, timestamp, text)
