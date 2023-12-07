@@ -266,7 +266,7 @@ def clear():
 def update_counts(names, channel_id, ts, text): # takes in array of user real names, and increments the keys accordingly
     real_name = names[0] # for each mention name, grab appropriate categories and update
     for name in names:
-        workout_channel =  "C05J39BKG3S"# os.environ["WORKOUT_ID"] # TODO move to workout ID once working # "C05J39BKG3S"
+        workout_channel =  os.environ["WORKOUT_ID"] # TODO move to workout ID once working # "C05J39BKG3S"
         throwing_channel =  os.environ["THROW_ID"]
         key = ""
         if channel_id == workout_channel:
