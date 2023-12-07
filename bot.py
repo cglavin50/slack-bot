@@ -55,7 +55,7 @@ def message(payload):
         print("Printing leaderboard updates", flush=True)
         leaderboard_command(channel_id)
     elif text == "!wwc" and uid != bot_id:
-        print("Printing WWC updates", flush=True)
+        print("Printing wwc")
         wwc_list(channel_id)
     elif uid != bot_id:
         users = parse_text(uid, text)
@@ -187,17 +187,21 @@ def wwc_list(channel_id): # post everyones total by team
     
     texts = [lloyd_text, kai_text, jay_text, zane_text, cole_text, garmadon_text]
     
-    message = "*Weekly WWC Updates:*\n"
+    message = "*Weekly WWC Updates :snowflake::snowflake:*\n"
     
     for i in range(len(teams)):
         team = teams[i]
         text = texts[i]
         for player in team:
+            line = "- " + player + ": "
+            line_list = []
             for category in categories:
                 key = player + " " + category
                 value = redis_client.get(key)
                 if value:
-                    text += key + ": " + value + "\n\t\t"
+                    line_list.append(category + " " + value)
+            line += ", ".join(line_list) + "\n"
+            text += line
         message += text + "\n"
         
     # post message 
