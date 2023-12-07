@@ -199,7 +199,6 @@ def wwc_list(channel_id): # post everyones total by team
             line = "- " + player + ": "
             line_list = []
             for category in categories:
-                print("category: " + category, flush=True)
                 key = player + " " + category
                 value = redis_client.get(key)
                 if value:
