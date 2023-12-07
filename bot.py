@@ -186,7 +186,7 @@ def wwc_list(channel_id): # post everyones total by team
     zane_text = "\t*Team Zane* :zane:\n\t\t"
     cole_text = "\t*Team Cole* :cole:\n\t\t"
     garmadon_text = "\t*Team Garmadon* :garmadon:\n\t\t"
-    categories = ["sprints", "lift", "agility", "mobility", "mental"]
+    categories = ["sprint", "lift", "agility", "mobility", "mental"]
     
     texts = [lloyd_text, kai_text, jay_text, zane_text, cole_text, garmadon_text]
     
@@ -200,6 +200,7 @@ def wwc_list(channel_id): # post everyones total by team
             line_list = []
             for category in categories:
                 key = player + " " + category
+                print(f"fetching key {key}", flush=True)
                 value = redis_client.get(key)
                 if value:
                     line_list.append(category + " " + value)
@@ -316,7 +317,7 @@ def extract_workout_key(name, text): # takes in the text string and sends to app
         key = name + " sprint"
     elif "mobility" in text.lower():
         key = name + " mobility"
-    elif "agiity" in text.lower():
+    elif "agility" in text.lower():
         key = name + " agility"
     elif "mental" in text.lower():
         key = key + " mental"
