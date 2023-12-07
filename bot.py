@@ -51,10 +51,12 @@ def message(payload):
 
     if text == "!list" and uid != bot_id:
         list_db(channel_id)
-
-    if text == "!leaderboards" and uid != bot_id:
+    elif text == "!leaderboards" and uid != bot_id:
         print("Printing leaderboard updates", flush=True)
         leaderboard_command(channel_id)
+    elif text == "!wwc" and uid != bot_id:
+        print("Printing WWC updates", flush=True)
+        wwc_list(channel_id)
     elif uid != bot_id:
         users = parse_text(uid, text)
         files = event.get('files')
@@ -164,6 +166,56 @@ def leaderboard_command(channel_id):
         text = msg_text,
     )
 # end post leadboards function
+
+def wwc_list(channel_id): # post everyones total by team 
+    lloyd = ["Ezra Tinsky", "Thomas Schmitt", "Tommy Reichard", "Nikolai Seferian", "Bilal"]
+    kai = ["Chris Strawn", "Joshua Datz", "Erik Anaya", "Braden Laidlaw", "Will Thomas", "Brooks Clifford"]
+    jay = ["Isaac Hawkins", "Grandpa", "Andreas Moeller", "Matt O'Connor", "Aidan Williams"] # Stevie = grandpa
+    zane = ["Michael Gordon", "Simon Mulrooney", "Hou Ning Song", "Benjamin Portner", "Rishu Nevatia"]
+    cole = ["Cooper Glavin", "Joshua Chilmaid", "Kaden Saad", "Lucas Suarez", "Jacob Graybow"]
+    garmadon = ["Andrew Sington", "Will Riley", "Archie Kranz", "Aaron Magtoto", "Sassan Fiske"]
+    
+    teams = [lloyd, kai, jay, zane, cole, garmadon]
+    
+    lloyd_text = "\t*Team Lloyd* :lloyd:\n\t\t"
+    kai_text = "\t*Team Kai* :kai:\n\t\t"
+    jay_text = "\t*Team Jay* :jay:\n\t\t"
+    zane_text = "\t*Team Zane* :zane:\n\t\t"
+    cole_text = "\t*Team Cole* :cole:\n\t\t"
+    garmadon_text = "\t*Team Garmadon* :garmadon:\n\t\t"
+    categories = ["sprints", "lift", "agility", "mobility", "mental"]
+    
+    texts = [lloyd_text, kai_text, jay_text, zane_text, cole_text, garmadon_text]
+    
+    message = "*Weekly WWC Updates:*\n"
+    
+    for i in range(len(teams)):
+        team = teams[i]
+        text = texts[i]
+        for player in team:
+            for category in categories:
+                key = player + " " + category
+                value = redis_client.get(key)
+                if value:
+                    text += key + ": " + value + "\n\t\t"
+        message += text + "\n"
+        
+    # post message 
+    client.chat_postMessage(
+        channel = channel_id,
+        blocks = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": message
+                }
+            }
+        ],
+        text = message,
+    )
+# end wwc leaderboard
+            
 
 # def mini(message): # create a poll to select mini times
 #     reaction_list = random.sample(reaction_list, 4)
